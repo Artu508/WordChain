@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("CHATCHAT", dataSnapshot.getValue().toString());
                 ChatData chat = dataSnapshot.getValue(ChatData.class);
                 ((ChatAdapter) mAdapter).addChat(chat);
+                mRecyclerView.scrollToPosition(chatList.size() - 1);
             }
 
             @Override
