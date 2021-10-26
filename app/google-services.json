@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1043618433567",
+    "firebase_url": "https://chat-ac0f7-default-rtdb.firebaseio.com",
+    "project_id": "chat-ac0f7",
+    "storage_bucket": "chat-ac0f7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1043618433567:android:495acd9ea9f38a220b232a",
+        "android_client_info": {
+          "package_name": "kr.jung.chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1043618433567-7jq5lqn3jlb3r6b13v2ttjkemkj4jqsu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkR-N1R1sqeyNX1NYO4WUcbSiETRsOHU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1043618433567-7jq5lqn3jlb3r6b13v2ttjkemkj4jqsu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
