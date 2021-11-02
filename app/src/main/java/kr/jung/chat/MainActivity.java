@@ -74,13 +74,9 @@ public class MainActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         db_Ref = database.getReference();
 
-
-        //caution!!!
-
         db_Ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("CHATCHAT", dataSnapshot.getValue().toString());
                 ChatData chat = dataSnapshot.getValue(ChatData.class);
                 ((ChatAdapter) mAdapter).addChat(chat);
                 mRecyclerView.scrollToPosition(chatList.size() - 1);
