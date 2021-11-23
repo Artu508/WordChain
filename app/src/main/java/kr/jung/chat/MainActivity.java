@@ -1,5 +1,9 @@
 package kr.jung.chat;
 
+import static android.content.ContentValues.TAG;
+
+import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_SETTLING;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +28,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
-    public  RecyclerView.Adapter mAdapter;
+    public ChatAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<ChatData> chatList;
     private String nick = "nick2";
@@ -38,27 +42,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         btn_Send = findViewById(R.id.btn_Send);
         ed_Chat = findViewById(R.id.ed_Chat);
 
-        btn_Send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String msg = ed_Chat.getText().toString(); //msg
+        btn_Send.setOnClickListener(v -> {
+            String msg = ed_Chat.getText().toString(); //msg
 
-                if(msg != null) {
-                    ed_Chat.setText(null);
-                    ChatData chat = new ChatData();
-                    chat.setNickname(nick);
-                    chat.setMsg(msg);
-                    db_Ref.push().setValue(chat);
-                }
-
+            if(msg != null) {
+                ed_Chat.setText("");
+                ChatData chat = new ChatData();
+                chat.setNickname(nick);
+                chat.setMsg(msg);
+                db_Ref.push().setValue(chat);
             }
+
         });
-
-
 
         mRecyclerView = findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -78,8 +76,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 ChatData chat = dataSnapshot.getValue(ChatData.class);
-                ((ChatAdapter) mAdapter).addChat(chat);
-                mRecyclerView.scrollToPosition(chatList.size() - 1);
+                mAdapter.addChat(chat);
+                if(mRecyclerView.getScrollState() == SCROLL_STATE_SETTLING) {
+                    mRecyclerView.scrollToPosition(chatList.size() - 1);
+                }
             }
 
             @Override
