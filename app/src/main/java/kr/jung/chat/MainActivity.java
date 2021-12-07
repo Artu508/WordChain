@@ -2,8 +2,6 @@ package kr.jung.chat;
 
 import static android.content.ContentValues.TAG;
 
-import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_SETTLING;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,9 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -22,20 +20,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ChatManager chatManager;
     private RecyclerView mRecyclerView;
-    public ChatAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private List<ChatData> chatList;
     private String nick = "nick2";
 
     private EditText ed_Chat;
     private Button btn_Send;
-    private DatabaseReference db_Ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(msg != null) {
                 ed_Chat.setText("");
-                ChatData chat = new ChatData();
-                chat.setNickname(nick);
-                chat.setMsg(msg);
-                db_Ref.push().setValue(chat);
+                chatManager.sendWord(msg);
             }
 
         });
@@ -63,44 +58,6 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        chatList = new ArrayList<>();
-        mAdapter = new ChatAdapter(chatList, MainActivity.this, nick);
-
-        mRecyclerView.setAdapter(mAdapter);
-
-        // Write a message to the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        db_Ref = database.getReference();
-
-        db_Ref.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                ChatData chat = dataSnapshot.getValue(ChatData.class);
-                mAdapter.addChat(chat);
-                if(mRecyclerView.getScrollState() == SCROLL_STATE_SETTLING) {
-                    mRecyclerView.scrollToPosition(chatList.size() - 1);
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        chatManager = new ChatManager(mRecyclerView, MainActivity.this, nick);
     }
 }

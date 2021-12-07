@@ -9,6 +9,11 @@ public class ChatData {
     private String msg;
     private String nickname;
 
+    public ChatData(String msg, String nickname) {
+        this.msg = msg;
+        this.nickname = nickname;
+    }
+
     public String getMsg() {
         return msg;
     }
