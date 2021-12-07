@@ -101,6 +101,7 @@ public class ChatManager {
     public void addFakeMessage(String msg, String nick) {
         ChatData chat = new ChatData(msg, nick);
         adapter.addChat(chat);
+        recyclerView.scrollToPosition(chatList.size() - 1);
     }
 
     public WordChainManager getWordChainManager() {
