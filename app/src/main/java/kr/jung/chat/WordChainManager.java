@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class WordChainManager {
-    private static final HashMap<String, String> preSoundMap = new HashMap<>();
+    private static final HashMap<Character, Character> preSoundMap = new HashMap<>();
     private static final List<String> words = new ArrayList<>();
     private static final List<String> routeWords = new ArrayList<>();
     private static final List<String> leadWords = new ArrayList<>();
@@ -33,12 +33,20 @@ public class WordChainManager {
     }
 
     public ChainState chainWord(String word) {
+        if(isUsed(word)) return ChainState.USED_WORD;
         if(!doWordExists(publicResources, word)) return ChainState.NONEXISTENT_WORD;
         if(usedWords.isEmpty()) {
             if(isLeadWord(publicResources, word)) return ChainState.FIRST_LEAD;
             if(isNeoWord(publicResources, word)) return ChainState.FIRST_NEO;
         }
-        if(isUsed(word)) return ChainState.USED_WORD;
+        else {
+            String lastWord = usedWords.get(usedWords.size() - 1);
+            char[] chars = lastWord.toCharArray();
+            char lastChar = chars[chars.length - 1];
+            char p = getPhoneticCharacter(publicResources, lastChar);
+            if(word.toCharArray().length > 0 && word.toCharArray()[0] != lastChar && word.toCharArray()[0] != p)
+                return ChainState.UNMATCHED_CHAIN;
+        }
 
         usedWords.add(word);
         return ChainState.OK;
@@ -46,6 +54,14 @@ public class WordChainManager {
 
     public boolean isUsed(String word) {
         return usedWords.contains(word);
+    }
+
+    public static void loadRequiredData(Resources resources) {
+        getNeoWords(resources);
+        getLeadWords(resources);
+        getRouteWords(resources);
+        getWords(resources);
+        getPhoneticCharacter(resources, (char) 0);
     }
 
     public static boolean doWordExists(Resources resources, String word) {
@@ -116,7 +132,7 @@ public class WordChainManager {
         return neoWords;
     }
 
-    public static String getPhoneticCharacter(Resources resource, char c) {
+    public static char getPhoneticCharacter(Resources resource, char c) {
         if(preSoundMap.isEmpty()) {
             try {
                 Scanner sc = new Scanner(resource.getAssets().open("presounds.json"));
@@ -126,17 +142,17 @@ public class WordChainManager {
                 }
                 JSONObject jsonObject = new JSONObject(builder.toString());
                 for (Iterator<String> it = jsonObject.keys(); it.hasNext(); ) {
-                    String key = it.next();
-                    preSoundMap.put(key, jsonObject.get(key) + "");
+                    char key = it.next().charAt(0);
+                    preSoundMap.put(key, (jsonObject.get(key + "") + "").charAt(0));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return preSoundMap.get(String.valueOf(c)) != null ? preSoundMap.get(String.valueOf(c)) : "nuㄴll";
+        return preSoundMap.get(c) != null ? preSoundMap.get(c) : c;
     }
 
     public static enum ChainState {
-        NONEXISTENT_WORD, USED_WORD, FIRST_NEO, FIRST_LEAD, OK
+        NONEXISTENT_WORD, UNMATCHED_CHAIN, USED_WORD, FIRST_NEO, FIRST_LEAD, OK
     }
 }

@@ -23,6 +23,7 @@ import java.util.List;
 public class ChatManager {
 
     private final WordChainManager wordChainManager;
+    private final Context context;
     private RecyclerView recyclerView;
     private final DatabaseReference rootReference;
     private final ChatAdapter adapter;
@@ -30,6 +31,7 @@ public class ChatManager {
     private String nickName;
 
     public ChatManager(RecyclerView recyclerView, Context context, String nick) {
+        this.context = context;
         wordChainManager = new WordChainManager(context.getResources());
         rootReference = FirebaseDatabase.getInstance().getReference();
         nickName = nick;
@@ -42,12 +44,16 @@ public class ChatManager {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try {
                     HashMap<String, Object> data = (HashMap<String, Object>) dataSnapshot.getValue();
-                    ChatData chat = new ChatData(data.get("msg") + "", data.get("nickname") + "");
+                    ChatData chat = new ChatData(data.get("msg") + "",
+                            data.get("nickname") + "",
+                            data.get("type") != null ? data.get("type") + "" : "chat");
+                    if(chat.getType().equals("word"))
+                        wordChainManager.chainWord(chat.getMsg());
                     adapter.addChat(chat);
                     recyclerView.scrollToPosition(chatList.size() - 1);
                 }
                 catch (Exception e) {
-                    adapter.addChat(new ChatData(e.toString(), "에러"));
+                    warn(e.toString());
                 }
             }
 
@@ -79,29 +85,39 @@ public class ChatManager {
 
     public void sendWord(String word) {
         WordChainManager.ChainState state = wordChainManager.chainWord(word);
-        if(state == WordChainManager.ChainState.NONEXISTENT_WORD) {
-            addFakeMessage("그런 단어 없다 짜슥아", "[!]");
-        }
-        else if(state == WordChainManager.ChainState.FIRST_LEAD) {
-            addFakeMessage("첫유도 양심있냐 짜슥아", "[!]");
-        }
-        else if(state == WordChainManager.ChainState.FIRST_NEO) {
-            addFakeMessage("첫한방 양심있냐 짜슥아", "[!]");
-        }
-        else {
-            sendMessage(word);
+        switch (state) {
+            case UNMATCHED_CHAIN:
+                warn("끝자리가 맞지 않습니다.");
+                break;
+            case NONEXISTENT_WORD:
+                warn("단어가 존재하지 않습니다. (기준: (구)표준국어대사전 명사단어)");
+                break;
+            case FIRST_LEAD:
+                warn("첫 단어로 한방 유도 단어를 사용하실 수 없습니다.");
+                break;
+            case FIRST_NEO:
+                warn("첫 단어로 한방 단어를 사용하실 수 없습니다.");
+                break;
+            case USED_WORD:
+                warn("이미 사용한 단어입니다.");
+                break;
+            default:
+                sendMessage(word, "word");
+                break;
         }
     }
 
     public void sendMessage(String msg) {
-        ChatData chat = new ChatData(msg, nickName);
+        sendMessage(msg, "chat");
+    }
+
+    public void sendMessage(String msg, String type) {
+        ChatData chat = new ChatData(msg, nickName, type);
         rootReference.push().setValue(chat);
     }
 
-    public void addFakeMessage(String msg, String nick) {
-        ChatData chat = new ChatData(msg, nick);
-        adapter.addChat(chat);
-        recyclerView.scrollToPosition(chatList.size() - 1);
+    public void warn(String msg) {
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
 
     public WordChainManager getWordChainManager() {
