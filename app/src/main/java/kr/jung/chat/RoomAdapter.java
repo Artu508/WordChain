@@ -1,6 +1,9 @@
 package kr.jung.chat;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,14 +32,14 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder>{
     @Override
     public RoomAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.chatitem, parent, false);
+                .inflate(R.layout.room_item, parent, false);
 
-        RoomAdapter.MyViewHolder vh = new RoomAdapter.MyViewHolder(v);
-        return vh;
+        return new MyViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        Log.d(TAG, "onBindViewHolder: " + 1234);
         RoomData room = mDataset.get(position);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference roomRef = database.getReference().child("rooms").child(room.getRid());
@@ -52,6 +55,12 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder>{
     @Override
     public int getItemCount() {
         return 0;
+    }
+
+    public void addRoom(String rid) {
+        mDataset.add(new RoomData(rid));
+        notifyDataSetChanged();
+        Log.d(TAG, "addRoom: " + rid);
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {

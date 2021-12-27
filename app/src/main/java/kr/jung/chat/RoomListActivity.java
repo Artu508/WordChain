@@ -1,5 +1,7 @@
 package kr.jung.chat;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,6 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.DragEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -35,10 +40,12 @@ public class RoomListActivity extends AppCompatActivity {
 
         createRoom = findViewById(R.id.create_room);
         recyclerView = findViewById(R.id.room_recy);
+        adapter = new RoomAdapter(list, this);
+
+        recyclerView.setAdapter(adapter);
         recyclerViewLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        adapter = new RoomAdapter(list, this);
-        recyclerView.setAdapter(adapter);
+        recyclerView.setHasFixedSize(true);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference rootRef = database.getReference(), roomListRef = rootRef.child("rooms");
@@ -46,9 +53,7 @@ public class RoomListActivity extends AppCompatActivity {
         roomListRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                list.add(new RoomData(snapshot.getKey()));
-                Toast.makeText(RoomListActivity.this, list.size(), Toast.LENGTH_SHORT).show();
-                adapter.notifyDataSetChanged();
+                adapter.addRoom(snapshot.getKey());
             }
 
             @Override
