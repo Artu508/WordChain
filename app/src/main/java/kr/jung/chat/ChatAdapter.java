@@ -77,8 +77,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-
-        //삼항 연산자
         return mDataset == null ? 0 :  mDataset.size();
     }
 
