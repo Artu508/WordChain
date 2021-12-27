@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -40,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         btn_Send = findViewById(R.id.btn_Send);
         ed_Chat = findViewById(R.id.ed_Chat);
 
@@ -60,6 +63,6 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        chatManager = new ChatManager(mRecyclerView, MainActivity.this, nick);
+        chatManager = new ChatManager(mRecyclerView, MainActivity.this, Define.ins().sUid);
     }
 }
