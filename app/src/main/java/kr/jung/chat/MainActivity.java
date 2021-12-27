@@ -56,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        WordChainManager.loadRequiredData(getResources());
-
         mRecyclerView = findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);

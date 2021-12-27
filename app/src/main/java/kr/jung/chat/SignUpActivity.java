@@ -1,5 +1,6 @@
 package kr.jung.chat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -18,7 +19,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
     private EditText editTextEmail;
-    private EditText editTextPassword;
+    private EditText editTextPassword, editTextPassword2;
     private EditText editTextName;
     private Button buttonJoin;
 
@@ -29,38 +30,42 @@ public class SignUpActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        editTextEmail = (EditText) findViewById(R.id.editText_email);
-        editTextPassword = (EditText) findViewById(R.id.editText_passWord);
-        editTextName = (EditText) findViewById(R.id.editText_name);
+        editTextEmail = findViewById(R.id.editText_email);
+        editTextPassword = findViewById(R.id.editText_passWord);
+        editTextPassword2 = findViewById(R.id.editText_passWord2);
+        editTextName = findViewById(R.id.editText_name);
 
-        buttonJoin = (Button) findViewById(R.id.btn_join);
-        buttonJoin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!editTextEmail.getText().toString().equals("") && !editTextPassword.getText().toString().equals("")) {
-                    // 이메일과 비밀번호가 공백이 아닌 경우
-                    createUser(editTextEmail.getText().toString(), editTextPassword.getText().toString(), editTextName.getText().toString());
-                } else {
-                    // 이메일과 비밀번호가 공백인 경우
-                    Toast.makeText(SignUpActivity.this, "계정과 비밀번호를 입력하세요.", Toast.LENGTH_LONG).show();
-                }
+        buttonJoin = findViewById(R.id.btn_join);
+        buttonJoin.setOnClickListener(v -> {
+            if(!editTextEmail.getText().toString().matches("[^@.]+@[^@]+")) {
+                Toast.makeText(SignUpActivity.this, "이메일 형식이 올바르지 않습니다.", Toast.LENGTH_SHORT).show();
+            }
+            else if(editTextPassword.getText().toString().length() < 8) {
+                Toast.makeText(SignUpActivity.this, "비밀번호가 너무 짧습니다.", Toast.LENGTH_SHORT).show();
+            }
+            else if(editTextName.getText().toString().length() == 0) {
+                Toast.makeText(SignUpActivity.this, "이름이 비어 있습니다.", Toast.LENGTH_SHORT).show();
+            }
+            else if(!editTextPassword.getText().toString().equals(editTextPassword2.getText().toString())) {
+                Toast.makeText(SignUpActivity.this, "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                createUser(editTextEmail.getText().toString(), editTextPassword.getText().toString(), editTextName.getText().toString());
             }
         });
     }
 
     private void createUser(String email, String password, String name) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // 회원가입 성공시
-                            Toast.makeText(SignUpActivity.this, "회원가입 성공", Toast.LENGTH_SHORT).show();
-                            finish();
-                        } else {
-                            // 계정이 중복된 경우
-                            Toast.makeText(SignUpActivity.this, "이미 존재하는 계정입니다.", Toast.LENGTH_SHORT).show();
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // 회원가입 성공시
+                        Toast.makeText(SignUpActivity.this, "회원가입 성공!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(SignUpActivity.this, LogInActivity.class));
+                        finish();
+                    } else {
+                        // 계정이 중복된 경우
+                        Toast.makeText(SignUpActivity.this, "이미 존재하는 계정입니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
