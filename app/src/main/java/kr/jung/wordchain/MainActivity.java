@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import kr.jung.chat.R;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override

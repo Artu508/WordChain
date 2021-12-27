@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Chat">
         <activity
-            android:name=".LoginActivity"
+            android:name=".LogInActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

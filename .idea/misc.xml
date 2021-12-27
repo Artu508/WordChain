@@ -3,12 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Chat/app/src/main/res/layout/activity_chat.xml" value="0.25364583333333335" />
-        <entry key="..\:/Chat/app/src/main/res/layout/activity_main.xml" value="0.1296875" />
-        <entry key="..\:/Chat/app/src/main/res/layout/chatitem.xml" value="0.1296875" />
-        <entry key="..\:/Users/A/AndroidStudioProjects/WordChain/app/src/main/res/layout/activity_login.xml" value="0.2" />
-        <entry key="..\:/Users/A/AndroidStudioProjects/WordChain/app/src/main/res/layout/activity_main.xml" value="0.264" />
-        <entry key="..\:/Users/A/AndroidStudioProjects/WordChain/app/src/main/res/layout/chatitem.xml" value="0.23541666666666666" />
+        <entry key="..\:/WordChain/app/src/main/res/layout/activity_login.xml" value="0.1" />
+        <entry key="..\:/WordChain/app/src/main/res/layout/activity_signup.xml" value="0.1" />
       </map>
     </option>
   </component>
