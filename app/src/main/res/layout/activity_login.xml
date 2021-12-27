@@ -18,11 +18,12 @@
         android:paddingLeft="84dp"
         android:paddingRight="84dp"
         android:text="로그인"
-        android:textColor="#AA00FF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/editText_passWord"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/editText_passWord"
-        app:layout_constraintTop_toBottomOf="@+id/textView_signUpTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/textView_signUpTitle"
+        app:layout_constraintVertical_bias="0.564" />
 
     <EditText
         android:id="@+id/editText_passWord"
@@ -36,8 +37,10 @@
         android:textColor="@android:color/black"
         app:layout_constraintBottom_toTopOf="@+id/btn_login"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_email" />
+        app:layout_constraintTop_toBottomOf="@+id/editText_email"
+        app:layout_constraintVertical_bias="0.057" />
 
     <EditText
         android:id="@+id/editText_email"
@@ -107,5 +110,17 @@
             app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <CheckBox
+        android:id="@+id/cb_autologin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="자동 로그인"
+        app:layout_constraintBottom_toTopOf="@+id/btn_login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.324"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText_passWord"
+        app:layout_constraintVertical_bias="0.533" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
