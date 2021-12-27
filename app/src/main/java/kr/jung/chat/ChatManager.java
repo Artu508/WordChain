@@ -1,15 +1,14 @@
 package kr.jung.chat;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,27 +24,30 @@ public class ChatManager {
     private final WordChainManager wordChainManager;
     private final Context context;
     private RecyclerView recyclerView;
-    private final DatabaseReference rootReference;
+    private final DatabaseReference rootReference, chatListRef;
     private final ChatAdapter adapter;
+    private final FirebaseUser user;
     private final List<ChatData> chatList = new ArrayList<>();
-    private String nickName;
+    private String uid;
 
-    public ChatManager(RecyclerView recyclerView, Context context, String nick) {
+    public ChatManager(RecyclerView recyclerView, Context context) {
         this.context = context;
         wordChainManager = new WordChainManager(context.getResources());
         rootReference = FirebaseDatabase.getInstance().getReference();
-        nickName = nick;
+        chatListRef = rootReference.child("chat-list");
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        uid = user.getUid();
 
-        adapter = new ChatAdapter(chatList, context, nick);
+        adapter = new ChatAdapter(chatList, context, uid);
         recyclerView.setAdapter(adapter);
 
-        rootReference.addChildEventListener(new ChildEventListener() {
+        chatListRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try {
                     HashMap<String, Object> data = (HashMap<String, Object>) dataSnapshot.getValue();
                     ChatData chat = new ChatData(data.get("msg") + "",
-                            data.get("nickname") + "",
+                            data.get("uid") + "",
                             data.get("type") != null ? data.get("type") + "" : "chat");
                     if(chat.getType().equals("word"))
                         wordChainManager.chainWord(chat.getMsg());
@@ -61,17 +63,14 @@ public class ChatManager {
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
             }
-
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
 
             }
-
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -112,8 +111,8 @@ public class ChatManager {
     }
 
     public void sendMessage(String msg, String type) {
-        ChatData chat = new ChatData(msg, nickName, type);
-        rootReference.push().setValue(chat);
+        ChatData chat = new ChatData(msg, uid, type);
+        chatListRef.push().setValue(chat);
     }
 
     public void warn(String msg) {
@@ -136,11 +135,11 @@ public class ChatManager {
         return chatList;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getUid() {
+        return uid;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

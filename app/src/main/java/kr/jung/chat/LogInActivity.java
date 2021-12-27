@@ -38,37 +38,27 @@ public class LogInActivity extends AppCompatActivity {
         editTextPassword = (EditText) findViewById(R.id.editText_passWord);
  
         buttonSignUp = (TextView) findViewById(R.id.btn_signup);
-        buttonSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // SignUpActivity 연결
-                Intent intent = new Intent(LogInActivity.this, SignUpActivity.class);
-                startActivity(intent);
-            }
+        buttonSignUp.setOnClickListener(v -> {
+            // SignUpActivity 연결
+            Intent intent = new Intent(LogInActivity.this, SignUpActivity.class);
+            startActivity(intent);
         });
  
         buttonLogIn = (Button) findViewById(R.id.btn_login);
-        buttonLogIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!editTextEmail.getText().toString().equals("") && !editTextPassword.getText().toString().equals("")) {
-                    loginUser(editTextEmail.getText().toString(), editTextPassword.getText().toString());
-                } else {
-                    Toast.makeText(LogInActivity.this, "계정과 비밀번호를 입력하세요.", Toast.LENGTH_LONG).show();
-                }
+        buttonLogIn.setOnClickListener(v -> {
+            if (!editTextEmail.getText().toString().equals("") && !editTextPassword.getText().toString().equals("")) {
+                loginUser(editTextEmail.getText().toString(), editTextPassword.getText().toString());
+            } else {
+                Toast.makeText(LogInActivity.this, "계정과 비밀번호를 입력하세요.", Toast.LENGTH_LONG).show();
             }
         });
  
-        firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    Intent intent = new Intent(LogInActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
-                }
+        firebaseAuthListener = firebaseAuth -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                Intent intent = new Intent(LogInActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
             }
         };
 
@@ -76,21 +66,14 @@ public class LogInActivity extends AppCompatActivity {
 
     public void loginUser(String email, String password) {
         firebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // 로그인 성공
-                            Toast.makeText(LogInActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
-                            firebaseAuth.addAuthStateListener(firebaseAuthListener);
-                            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                            DatabaseReference uid = mDatabase.child("uid").child("nickname");
-                            Define.ins().sUid = uid.toString();
-
-                        } else {
-                            // 로그인 실패
-                            Toast.makeText(LogInActivity.this, "아이디 또는 비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // 로그인 성공
+                        Toast.makeText(LogInActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
+                        firebaseAuth.addAuthStateListener(firebaseAuthListener);
+                    } else {
+                        // 로그인 실패
+                        Toast.makeText(LogInActivity.this, "아이디 또는 비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

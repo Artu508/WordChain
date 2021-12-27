@@ -7,16 +7,16 @@ public class ChatData {
     */
 
     private String msg;
-    private String nickname;
+    private String uid;
     private String type;
 
-    public ChatData(String msg, String nickname) {
-        this(msg, nickname, "chat");
+    public ChatData(String msg, String uid) {
+        this(msg, uid, "chat");
     }
 
-    public ChatData(String msg, String nickname, String type) {
+    public ChatData(String msg, String uid, String type) {
         this.msg = msg;
-        this.nickname = nickname;
+        this.uid = uid;
         this.type = type;
     }
 
@@ -28,12 +28,12 @@ public class ChatData {
         this.msg = msg;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getUid() {
+        return uid;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getType() {

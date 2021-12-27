@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     private ChatManager chatManager;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private String nick = "nick2";
 
     private EditText ed_Chat;
     private Button btn_Send;
@@ -40,8 +40,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
 
         btn_Send = findViewById(R.id.btn_Send);
         ed_Chat = findViewById(R.id.ed_Chat);
@@ -61,6 +59,6 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        chatManager = new ChatManager(mRecyclerView, MainActivity.this, Define.ins().sUid);
+        chatManager = new ChatManager(mRecyclerView, MainActivity.this);
     }
 }

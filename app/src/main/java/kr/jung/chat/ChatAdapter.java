@@ -9,12 +9,15 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.List;
 
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> {
     private List<ChatData> mDataset;
-    private String myNickName;
+    private String uid;
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
@@ -35,10 +38,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public ChatAdapter(List<ChatData> myDataset, Context context, String myNickName) {
+    public ChatAdapter(List<ChatData> myDataset, Context context, String uid) {
         //{"1","2"}
         mDataset = myDataset;
-        this.myNickName = myNickName;
+        this.uid = uid;
     }
 
     // Create new views (invoked by the layout manager)
@@ -60,10 +63,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         // - replace the contents of the view with that element
         ChatData chat = mDataset.get(position);
 
-        holder.tv_Name.setText(chat.getNickname());
+        FirebaseDatabase.getInstance().getReference().child("users")
+                .child(chat.getUid()).child("name").get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()) {
+                holder.tv_Name.setText(task.getResult().getValue().toString());
+            }
+        });
         holder.tv_Msg.setText(chat.getMsg());
 
-        if(chat.getNickname().equals(this.myNickName)) {
+        if(chat.getUid().equals(this.uid)) {
             holder.tv_Msg.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
             holder.tv_Name.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
         }

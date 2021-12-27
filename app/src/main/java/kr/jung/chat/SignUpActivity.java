@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -60,6 +61,8 @@ public class SignUpActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // 회원가입 성공시
+                        FirebaseDatabase.getInstance().getReference().child("users")
+                                .child(task.getResult().getUser().getUid().toString()).child("name").setValue(name);
                         Toast.makeText(SignUpActivity.this, "회원가입 성공!", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(SignUpActivity.this, LogInActivity.class));
                         finish();
